@@ -24,6 +24,50 @@ const { image, title} = Astro.props;
 	<button id="download-button">Download</button>
 </li>
 <script>
+    let downloadLinks = {
+        English: "/comics/first-issue/deviouscodes-issue1-english.pdf",
+        Hindi: "/comics/first-issue/deviouscodes-issue1-hindi.pdf",
+        Marathi: "/comics/first-issue/deviouscodes-issue1-marathi.pdf",
+        Gujarati: "/comics/first-issue/deviouscodes-issue1-gujarati.pdf",
+        Kannada: "/comics/first-issue/deviouscodes-issue1-kannada.pdf"
+    }
+    const selector = document.getElementById("language-selector");
+    let selectedLanguage = "English";
+
+    if (selector instanceof HTMLSelectElement) {
+        selector.addEventListener('change', () => {
+            selectedLanguage = selector.options[selector.selectedIndex].text;
+        });
+    }
+
+    const button = document.getElementById("download-button");
+    if (button) {
+        button.addEventListener('click', () => {
+            const urlKey = selectedLanguage as keyof typeof downloadLinks;
+            let url = downloadLinks[urlKey];
+            if (url) {
+                download(url);
+            } else {
+                console.error("URL for selected language not found.");
+            }
+        });
+    }
+
+    function download(url: string) {
+        const a = document.createElement('a');
+        a.href = url;
+        const fileName = url.split('/').pop();
+        if (fileName) {
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            console.error("File name not found in URL.");
+        }
+    }
+</script>
+<!-- <script>
 	let downloadLinks = {
 		English: "/comics/first-issue/deviouscodes-issue1-english.pdf",
 		Hindi: "/comics/first-issue/deviouscodes-issue1-hindi.pdf",
@@ -33,20 +77,25 @@ const { image, title} = Astro.props;
 	}
 	const selector = document.getElementById("language-selector");
 	let selectedLanguage = "English";
-
-	selector.addEventListener('change', () => {
+	if(selector) {
+		selector.addEventListener('change', () => {
 		selectedLanguage = selector.options[selector.selectedIndex].text;
 		
-	});
+		});
+	}
+	
 
 	const button = document.getElementById("download-button");
-	button.addEventListener('click', () => {
+	if(button) {
+		button.addEventListener('click', () => {
 		let url = downloadLinks[selectedLanguage];
 		download(url)
 
-	});
+		});
+	}
+	
 
-	function download(url) {
+	function download(url: string) {
   		const a = document.createElement('a')
   		a.href = url
   		a.download = url.split('/').pop()
@@ -56,7 +105,7 @@ const { image, title} = Astro.props;
 	}
 	
 
-</script>
+</script> -->
 <style>
 	.link-card {
 		list-style: none;
